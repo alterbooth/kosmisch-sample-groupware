@@ -173,9 +173,11 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Data\UserContext.cs" />
+    <Compile Include="Filters\LogFinter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\MailViewModel.cs" />
@@ -248,7 +250,7 @@
     <Content Include="Views\Mail\Create.cshtml" />
     <Content Include="Views\Mail\Delete.cshtml" />
     <Content Include="Views\Mail\Details.cshtml" />
-    <Content Include="Views\Mail\Edit.cshtml" />
+    <Content Include="Views\Mail\Done.cshtml" />
     <Content Include="Views\Mail\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
