@@ -24,9 +24,9 @@ ASP.NET Coreで実装可能なアプリケーションは以下のとおりで�
 3. コマンドを入力してリポジトリをクローンする  
 `git clone (コピーしたURL)`
 
-4. `Kosmisch.Sample.OnPremisesAspnetApp`ディレクトリを`Kosmisch.Sample.OnPremisesAspnetApp.Net47`にリネームする
+4. `Kosmisch.Sample.GroupwareApp`ディレクトリを`Kosmisch.Sample.GroupWareApp.Net47`にリネームする
 
-5. `Kosmisch.Sample.OnPremisesAspnetApp.sln`ファイルを削除する
+5. `Kosmisch.Sample.GroupwareaApp.sln`ファイルを削除する
 
 6. `packages`ディレクトリがあれば削除する
 
@@ -41,9 +41,9 @@ ASP.NET Coreで実装可能なアプリケーションは以下のとおりで�
 
 ```
 dotnet new global.json --sdk-version 2.1.508
-dotnet new mvc -o Kosmisch.Sample.OnPremisesAspnetApp
-dotnet new sln -n Kosmisch.Sample.OnPremisesAspnetApp
-dotnet sln Kosmisch.Sample.OnPremisesAspnetApp.sln add Kosmisch.Sample.OnPremisesAspnetApp/Kosmisch.Sample.OnPremisesAspnetApp.csproj
+dotnet new mvc -o Kosmisch.Sample.GroupwareApp
+dotnet new sln -n Kosmisch.Sample.GroupwareApp
+dotnet sln Kosmisch.Sample.GroupwareApp.sln add Kosmisch.Sample.GroupwareApp/Kosmisch.Sample.GroupwareApp.csproj
 dotnet dev-certs https --trust
 ```
 
@@ -53,24 +53,24 @@ dotnet dev-certs https --trust
 > dotnet new global.json --sdk-version 2.1.508
 The template "global.json file" was created successfully.
 
-> dotnet new mvc -o Kosmisch.Sample.OnPremisesAspnetApp
+> dotnet new mvc -o Kosmisch.Sample.GroupwareApp
 The template "ASP.NET Core Web App (Model-View-Controller)" was created successfully.
 This template contains technologies from parties other than Microsoft, see https://aka.ms/aspnetcore-template-3pn-210 for details.
 
 Processing post-creation actions...
-Running 'dotnet restore' on Kosmisch.Sample.OnPremisesAspnetApp\Kosmisch.Sample.OnPremisesAspnetApp.csproj...
-  Restoring packages for C:\src\kosmisch-sample-on-premises-aspnet-app\Kosmisch.Sample.OnPremisesAspnetApp\Kosmisch.Sample.OnPremisesAspnetApp.csproj...
-  Generating MSBuild file C:\src\kosmisch-sample-on-premises-aspnet-app\Kosmisch.Sample.OnPremisesAspnetApp\obj\Kosmisch.Sample.OnPremisesAspnetApp.csproj.nuget.g.props.
-  Generating MSBuild file C:\src\kosmisch-sample-on-premises-aspnet-app\Kosmisch.Sample.OnPremisesAspnetApp\obj\Kosmisch.Sample.OnPremisesAspnetApp.csproj.nuget.g.targets.
-  Restore completed in 898.61 ms for C:\src\kosmisch-sample-on-premises-aspnet-app\Kosmisch.Sample.OnPremisesAspnetApp\Kosmisch.Sample.OnPremisesAspnetApp.csproj.
+Running 'dotnet restore' on Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj...
+  Restoring packages for C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj...
+  Generating MSBuild file C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\obj\Kosmisch.Sample.GroupwareApp.csproj.nuget.g.props.
+  Generating MSBuild file C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\obj\Kosmisch.Sample.GroupwareApp.csproj.nuget.g.targets.
+  Restore completed in 898.61 ms for C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj.
 
 Restore succeeded.
 
-> dotnet new sln -n Kosmisch.Sample.OnPremisesAspnetApp
+> dotnet new sln -n Kosmisch.Sample.GroupwareApp
 The template "Solution File" was created successfully.
 
-> dotnet sln Kosmisch.Sample.OnPremisesAspnetApp.sln add Kosmisch.Sample.OnPremisesAspnetApp/Kosmisch.Sample.OnPremisesAspnetApp.csproj
-Project `Kosmisch.Sample.OnPremisesAspnetApp\Kosmisch.Sample.OnPremisesAspnetApp.csproj` added to the solution.
+> dotnet sln Kosmisch.Sample.GroupwareApp.sln add Kosmisch.Sample.GroupwareApp/Kosmisch.Sample.GroupwareApp.csproj
+Project `Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj` added to the solution.
 
 > dotnet dev-certs https --trust
 Trusting the HTTPS development certificate was requested. A confirmation prompt will be displayed if the certificate was not previously trusted. Click yes on the prompt to trust the certificate.
@@ -90,7 +90,7 @@ HTTPS開発証明書をインストールしない場合、プロジェクトを
 現時点でのプロジェクトを実行するために `dotnet run` コマンドを入力しましょう。
 
 ```
-cd Kosmisch.Sample.OnPremisesAspnetApp
+cd Kosmisch.Sample.GroupwareApp
 dotnet run
 ```
 
@@ -98,7 +98,7 @@ dotnet run
 
 ```
 > dotnet run
-D:\tmp\kosmisch-sample-on-premises-aspnet-app\Kosmisch.Sample.OnPremisesAspnetApp\Properties\launchSettings.json からの起動設定を使用中...
+D:\tmp\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\Properties\launchSettings.json からの起動設定を使用中...
 info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[0]
       User profile is available. Using 'C:\Users\alterbooth\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
 Hosting environment: Development
