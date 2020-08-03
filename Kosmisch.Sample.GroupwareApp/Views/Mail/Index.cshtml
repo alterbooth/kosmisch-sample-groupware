@@ -1,0 +1,46 @@
+﻿@model Kosmisch.Sample.GroupwareApp.Models.MailViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<form action="/Mail/Create" method="GET">
+    <table class="table">
+        <tr>
+            <th>メール配信</th>
+            <th>
+                名
+            </th>
+            <th>
+                姓
+            </th>
+            <th>
+                メールアドレス
+            </th>
+        </tr>
+
+        @foreach (var item in Model.Users)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="Ids[@item.ID]" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MailAddress)
+                </td>
+            </tr>
+        }
+
+    </table>
+    <p>
+        <input type="submit" value="メール内容入力" />
+    </p>
+</form>
