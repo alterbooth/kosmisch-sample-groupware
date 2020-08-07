@@ -53,24 +53,20 @@ dotnet dev-certs https --trust
 > dotnet new global.json --sdk-version 2.1.508
 The template "global.json file" was created successfully.
 
-> dotnet new mvc -o Kosmisch.Sample.GroupwareApp
-The template "ASP.NET Core Web App (Model-View-Controller)" was created successfully.
-This template contains technologies from parties other than Microsoft, see https://aka.ms/aspnetcore-template-3pn-210 for details.
+>  dotnet new mvc -o Kosmisch.Sample.GroupwareApp
+テンプレート "ASP.NET Core Web App (Model-View-Controller)" が正常に作成されました。
+このテンプレートには Microsoft 以外からのテクノロジが含まれています。詳細については https://aka.ms/aspnetcore-template-3pn-210 をご覧ください。
 
-Processing post-creation actions...
-Running 'dotnet restore' on Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj...
-  Restoring packages for C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj...
-  Generating MSBuild file C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\obj\Kosmisch.Sample.GroupwareApp.csproj.nuget.g.props.
-  Generating MSBuild file C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\obj\Kosmisch.Sample.GroupwareApp.csproj.nuget.g.targets.
-  Restore completed in 898.61 ms for C:\src\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj.
+作成後のアクションを処理しています...
+  ***\kosmisch-sample-groupware\Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj の復元が 2.64 sec で完了しました。
 
-Restore succeeded.
+正常に復元されました。
 
 > dotnet new sln -n Kosmisch.Sample.GroupwareApp
-The template "Solution File" was created successfully.
+テンプレート "Solution File" が正常に作成されました。
 
 > dotnet sln Kosmisch.Sample.GroupwareApp.sln add Kosmisch.Sample.GroupwareApp/Kosmisch.Sample.GroupwareApp.csproj
-Project `Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj` added to the solution.
+プロジェクト `Kosmisch.Sample.GroupwareApp\Kosmisch.Sample.GroupwareApp.csproj` をソリューションに追加しました。
 
 > dotnet dev-certs https --trust
 Trusting the HTTPS development certificate was requested. A confirmation prompt will be displayed if the certificate was not previously trusted. Click yes on the prompt to trust the certificate.
@@ -185,47 +181,74 @@ log  : D:\tmp\kosmisch-sample-on-premises-aspnet-app\Kosmisch.Sample.OnPremisesA
 ---
 
 ## 5.モデルを移行する
-Entity Framework Coreの形式に沿ったModelに移行するため、下記のファイルを`Kosmisch.Sample.OnPremisesAspnetApp/Models`にコピーします。  
-- `Kosmisch.Sample.OnPremisesAspnetApp.Net47/Data/MyContext.cs`
-- `Kosmisch.Sample.OnPremisesAspnetApp.Net47/Models/User.cs`
+Entity Framework Coreの形式に沿ったModelに移行するため、下記のファイルを`Kosmisch.Sample.GroupwareApp/Models`にコピーします。  
+- `Kosmisch.Sample.GroupwareApp.Net47/Models/MailViewModel.cs`
+- `Kosmisch.Sample.GroupwareApp.Net47/Models/User.cs`
+
+また、`Kosmisch.Sample.GroupwareApp.Net47/Data/UserContext.cs`を`Kosmisch.Sample.GroupwareApp/Data`にコピーします。
+
 
 ---
 
-### 6.データベースの接続定義を修正する
-`Kosmisch.Sample.OnPremisesAspnetApp/Data/MyContext.cs`を下記のように変更します。
+## 6.データベースの接続定義を移行する
+`Kosmisch.Sample.GroupwareApp/appsettings.Development.json`を下記のように変更します。（ここで追記するのは開発環境におけるローカルDBへの接続設定です）
 
-```csharp
-using Microsoft.EntityFrameworkCore;
-
-namespace Kosmisch.Sample.OnPremisesAspnetApp.Data
+```json
 {
-    public class MyContext : DbContext
-    {
-        public MyContext(DbContextOptions<MyContext> options) : base(options)
-        {
-        }
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
     }
-
-    public DbSet<Kosmisch.Sample.OnPremisesAspnetApp.Models.User> Users { get; set; }
+  },
+  "ConnectionStrings": {
+    "DatabaseConnectionString": "Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=kosmisch-sample-groupware-core; Integrated Security=True; MultipleActiveResultSets=True;"
+  }
 }
 ```
 
 ---
 
-### 7.スタートアップに登録する
-ASP.NETのアプリケーションでO/Rマッパーに[Entity Framework](https://docs.microsoft.com/ja-jp/ef/ef6/)を使用している場合、[Entity Framework Core](https://docs.microsoft.com/ja-jp/ef/core/)に移行することが推奨されています。
+### 7.DBContextを移行し、DBマイグレーションを行う
 
-`Kosmisch.Sample.OnPremisesAspnetApp/Startup.cs`の冒頭に下記のコードを追加します。
+### 7-1.UserContextを移行する
+
+`Kosmisch.Sample.GroupwareApp/Data/UserContext.cs`を下記のように変更します。
 
 ```csharp
 using Microsoft.EntityFrameworkCore;
-using Kosmisch.Sample.OnPremisesAspnetApp.Models;
+
+namespace Kosmisch.Sample.GroupwareApp.Data
+{
+    public class UserContext : DbContext
+    {
+        public UserContext(DbContextOptions<UserContext> options) : base(options)
+        {
+        }
+
+        public DbSet<Kosmisch.Sample.GroupwareApp.Models.User> Users { get; set; }
+    }
+}
+```
+
+---
+
+### 7-2.スタートアップに登録する
+ASP.NETのアプリケーションでO/Rマッパーに[Entity Framework](https://docs.microsoft.com/ja-jp/ef/ef6/)を使用している場合、[Entity Framework Core](https://docs.microsoft.com/ja-jp/ef/core/)に移行することが推奨されています。
+
+`Kosmisch.Sample.GroupwareApp/Startup.cs`の冒頭に下記のコードを追加します。
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using Kosmisch.Sample.GroupwareApp.Models;
+using Kosmisch.Sample.GroupwareApp.Data;
 ```
 
 `Kosmisch.Sample.OnPremisesAspnetApp/Startup.cs`の`ConfigureServices`メソッドに下記のコードを追加します。
 
 ```csharp
-services.AddDbContext<MyContext>(options =>
+services.AddDbContext<UserContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DatabaseConnectionString")));
 ```
 
@@ -242,8 +265,8 @@ ASP.NET Coreではエントリーポイントは`Program.cs`というファイ�
 
 
 ### 8-1.フィルターを移行する
-`Kosmisch.Sample.OnPremisesAspnetApp.Net47/Filters`をコピーして`Kosmisch.Sample.OnPremisesAspnetApp`に貼り付けます。  
-`Kosmisch.Sample.OnPremisesAspnetApp/Filters/LogFilter.cs`を開き、ファイル冒頭のusing群を下記のように変更します。
+`Kosmisch.Sample.GroupwareApp.Net47/Filters`をコピーして`Kosmisch.Sample.GroupwareApp`に貼り付けます。  
+`Kosmisch.Sample.GroupwareApp/Filters/LogFilter.cs`を開き、ファイル冒頭のusing群を下記のように変更します。
 
 ```csharp
 // 変更前
@@ -256,7 +279,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 ```
 
 #### 8-2.フィルター読み込みを修正する
-`Kosmisch.Sample.OnPremisesAspnetApp/Startup.cs`の`ConfigureServices`メソッドを下記のように変更します。
+`Kosmisch.Sample.GroupwareApp/Startup.cs`の`ConfigureServices`メソッドを下記のように変更します。
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -266,65 +289,56 @@ public void ConfigureServices(IServiceCollection services)
 
     // 変更後のコード
     services
-        .AddMvc(options => options.Filters.Add(new Kosmisch.Sample.OnPremisesAspnetApp.Filters.LogFilter()))
+        .AddMvc(options => options.Filters.Add(new Kosmisch.Sample.GroupwareApp.Filters.LogFilter()))
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 }
 ```
 
-#### 8-3.ルーティング設定をスタートアップに登録する
-`Kosmisch.Sample.OnPremisesAspnetApp/Startup.cs`の`Configure`メソッドを下記のように変更します。
+### 8-3. Helperを移行する
 
-```csharp
-// 変更前のコード
-// app.UseMvc(routes =>
-// {
-//     routes.MapRoute(
-//         name: "default",
-//         template: "{controller=Home}/{action=Index}/{id?}");
-// });
+`Kosmisch.Sample.GroupwareApp.Net47/Helpers`をコピーして`Kosmisch.Sample.GroupwareApp`に貼り付けます。
 
-// 変更後のコード
-app.UseMvc(routes =>
-{
-    routes.MapRoute(
-        name: "default",
-        template: "{controller=Users}/{action=Index}/{id?}");
-});
-```
 
----
 
 ## 9.コントローラーの移行
+
 次にコントローラーの移行を行います。  
-`Kosmisch.Sample.OnPremisesAspnetApp.Net47/Controllers/UsersController.cs`を`Kosmisch.Sample.OnPremisesAspnetApp/Controllers`にコピーして、変更を行います。  
+`Kosmisch.Sample.GroupwareApp.Net47/Controllers/`以下の`UsersController.cs`と`MailController.cs`,を`Kosmisch.Sample.GroupwareApp/Controllers`にコピーして、変更を行います。  
 主な変更ポイントは以下の通りです。
+
 - usingから`System.Web.Mvc`と`System.Data.Entity`を削除
 - usingに`Microsoft.AspNetCore.Mvc`と`Microsoft.EntityFrameworkCore`を追加
 - 引数Bindの`Include = `を削除
 - `new HttpStatusCodeResult(HttpStatusCode.BadRequest)`を`BadRequest()`に変更
 - `HttpNotFound()`を`NotFound()`に変更
+- [Autorize]を削除
 
 また、先程のレポートで指摘があった通り、ASP.NET CoreではMyContextをDIで初期化するためコンストラクタ引数で受け取るよう変更する必要があります。  
 以上を踏まえ、下記のようにコードを変更します。
 
+
+
+`UsersContorller.cs`
+
 ```csharp
-using Kosmisch.Sample.OnPremisesAspnetApp.Data;
-using Kosmisch.Sample.OnPremisesAspnetApp.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Net;
+using System.Web;
+using Kosmisch.Sample.GroupwareApp.Data;
+using Kosmisch.Sample.GroupwareApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
 
-namespace Kosmisch.Sample.OnPremisesAspnetApp.Controllers
+namespace Kosmisch.Sample.GroupwareApp.Controllers
 {
     public class UsersController : Controller
     {
-        private MyContext db;
+        private UserContext db;
 
-        public UsersController(MyContext db)
-        {
+        public UsersController(UserContext db){
             this.db = db;
         }
 
@@ -335,7 +349,7 @@ namespace Kosmisch.Sample.OnPremisesAspnetApp.Controllers
         }
 
         // GET: Users/Details/5
-        public ActionResult Details(Guid? id)
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -358,21 +372,20 @@ namespace Kosmisch.Sample.OnPremisesAspnetApp.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind("Id,Name,Age,ProfileImageName")] User user)
+        public ActionResult Create([Bind("ID,LastName,FirstName,MailAddress")] User user)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(user);
+                db.Users.Add(user);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
 
-            user.Id = Guid.NewGuid();
-            db.Users.Add(user);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View(user);
         }
 
         // GET: Users/Edit/5
-        public ActionResult Edit(Guid? id)
+        public ActionResult Edit(int? id)
         {
             if (id == null)
             {
@@ -389,20 +402,19 @@ namespace Kosmisch.Sample.OnPremisesAspnetApp.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind("Id,Name,Age,ProfileImageName")] User user)
+        public ActionResult Edit([Bind("ID,LastName,FirstName,MailAddress")] User user)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(user);
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
-
-            db.Entry(user).State = EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View(user);
         }
 
         // GET: Users/Delete/5
-        public ActionResult Delete(Guid? id)
+        public ActionResult Delete(int? id)
         {
             if (id == null)
             {
@@ -419,30 +431,11 @@ namespace Kosmisch.Sample.OnPremisesAspnetApp.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
+        public ActionResult DeleteConfirmed(int id)
         {
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public ActionResult SendEmailSample()
-        {
-            EmailHelper.Send();
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public ActionResult SaveUserDataSample()
-        {
-            // HttpContext.Server.MapPathが使えないので一旦コメントアウト
-            // 後ほど、ファイルの保存先変更時に併せて変更します
-            // var users = db.Users.ToList();
-            // var json = JsonConvert.SerializeObject(users);
-            // var path = HttpContext.Server.MapPath("~/temp/");
-            // FileHelper.WriteJson(path, json);
             return RedirectToAction("Index");
         }
 
@@ -458,53 +451,139 @@ namespace Kosmisch.Sample.OnPremisesAspnetApp.Controllers
 }
 ```
 
----
 
-## 10.ビューの移行
-次にページのUIを定義するビューの移行を行います。  
-`Kosmisch.Sample.OnPremisesAspnetApp.Net47/Views/Users`をコピーして`Kosmisch.Sample.OnPremisesAspnetApp/Views`に貼り付けます。`Create.cshtml`と`Edit.cshtml`について、`@section Scripts`部分を削除します。
 
----
+`MailController.cs`
 
-## 11.ファイル操作箇所の変更
-パブリッククラウドのPaaS環境にホストするアプリケーションは、スケールアウトを想定してステートレス構成で実装することが推奨されています。  
-今回はファイルの保存先をローカルからAzure Blob Storageに変更し、サーバー内に画像を保管しないコードに変えます。
-
-```csharp
-public static class FileHelper
+```
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Web;
+using Kosmisch.Sample.GroupwareApp.Data;
+using Kosmisch.Sample.GroupwareApp.Models;
+using Kosmisch.Sample.OnPremisesAspnetApp.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+namespace Kosmisch.Sample.GroupwareApp.Controllers
 {
-    public static void WriteJson(string json)
+    public class MailController : Controller
     {
-        string connectionString = Environment.GetEnvironmentVariable("CONNECT_STR") ?? "UseDevelopmentStorage=true";
-        CloudStorageAccount.TryParse(connectionString, out var storageAccount);
+        private UserContext db;
+        
+        public MailController(UserContext db){
+            this.db = db;
+        }
 
-        var cloudBlobClient = storageAccount.CreateCloudBlobClient();
-        var containerName = Environment.GetEnvironmentVariable("BLOB_CONTAINER_NAME") ?? "mycontainer";
-        var cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
-        cloudBlobContainer.CreateAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-        var permissions = cloudBlobContainer.GetPermissionsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-        permissions.PublicAccess = BlobContainerPublicAccessType.Blob;
-        cloudBlobContainer.SetPermissionsAsync(permissions).ConfigureAwait(false).GetAwaiter().GetResult();
+        // GET: Mail
+        public ActionResult Index()
+        {
+            var Model = new MailViewModel();
+            Model.Users = db.Users.ToList();
+            return View(Model);
+        }
 
-        var cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference($"sample-data-{DateTime.Now.ToString("yyyyMMddHHmmss")}.json");
-        cloudBlockBlob.UploadTextAsync(json).ConfigureAwait(false).GetAwaiter().GetResult();
+        // GET: Mail/Create
+        [HttpGet]
+                public ActionResult Create([Bind("Ids")] MailViewModel model, string x)
+        {
+            return View(model);
+        }
+
+        // POST: Mail/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind("Ids,Subject,Body")] MailViewModel model)
+        {
+            if (String.IsNullOrEmpty(model.Subject) || String.IsNullOrEmpty(model.Body) || model.Ids.Count == 0)
+            {
+                return View(model);
+            }
+
+            foreach (var item in db.Users.ToList())
+            {
+                if (model.Ids.ContainsKey(item.ID.ToString()))
+                {
+                    EmailHelper.Send(item.MailAddress, model.Subject, model.Body);
+                }
+            }
+            return View("Done");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }
 ```
 
-UsersController内の`SaveUserDataSample()`を以下の通り変更します。
 
-```csharp
-[HttpPost]
-public ActionResult SaveUserDataSample()
-{
-    var users = db.Users.ToList();
-    var json = JsonConvert.SerializeObject(users);
-    FileHelper.WriteJson(json);
-    return RedirectToAction("Index");
-}
+
+---
+
+## 10.ビューの移行
+
+次にページのUIを定義するビューの移行を行います。  
+`Kosmisch.Sample.GroupwareApp.Net47/Views/Users`と`Kosmisch.Sample.GroupwareApp.Net47/Views/Mail`をコピーして`Kosmisch.Sample.GroupwareApp/Views`に貼り付けます。`Users/Create.cshtml`と`Users/Edit.cshtml`,`Mail/Create.cshtml`,`Mail/Done.cshtml`について、`@section Scripts`部分を削除します。
+
+
+
+`Kosmisch.Sample.GroupwareApp.Net47/Views/Home/Index.cshtml`を`Kosmisch.Sample.GroupwareApp/Views/Home/`にコピーします。
+
+`Kosmisch.Sample.GroupwareApp.Net47\Views\Shared\`のファイルを`Kosmisch.Sample.
+GroupwareApp\Views\Shared\`にコピーします。
+
+`Shared\_Layout.cshtml`を以下のように修正します。
+
 ```
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("サンプルグループウェア", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("ホーム", "Index", "Home")</li>
+                    <li>@Html.ActionLink("ユーザ管理", "Index", "Users")</li>
+                    <li>@Html.ActionLink("メール送信", "Index", "Mail")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - マイ ASP.NET アプリケーション</p>
+        </footer>
+    </div>
 
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+```
 ---
 
 ## 12.メール送信処理の変更
@@ -533,7 +612,17 @@ git push origin master
 ---
 
 ## 15.KOSMISCH Monolithで再度解析を行う
-[「#2 KOSMISCH Monolith を使ってアプリケーションを解析する」](./analyze-application-by-kosmisch-monolith.md)と同じ手順で、KOSMISCH Monolithを使用して ASP.NET Coreのソースコードを再度解析しましょう。  
+[「#2 KOSMISCH bbMonolith を使ってアプリケーションを解析する」](./analyze-application-by-kosmisch-monolith.md)と同じ手順で、KOSMISCH Monolithを使用して ASP.NET Coreのソースコードを再度解析しましょう。  
+
 - [KOSMISCH Monolith](https://monolith.kosmisch.tech)にログインする
-- 自身のGitHubリポジトリを指定して解析を開始する
+- 自身のGitHubリポジトリを指定して解析を開始する。フレームワークは「ASP.NET Core」を選択してください。
 - 解析が終了したらレポートを確認する
+
+## 16. 認証機能について
+
+今回のサンプルでは、ASP.NET Coreにマイグレーションするに当たって一旦認証機能については除外しています。
+
+今後クラウド上でアプリケーションを動かす場合、認証機能はアプリケーションが独自に実装せず、IDaaS(ID as a Service)と呼ばれるクラウドの機能を用いるように修正することをお勧めします。
+
+認証機能のマイグレーションについては、次のサンプルで取り上げる予定です。
+

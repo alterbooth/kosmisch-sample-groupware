@@ -44,6 +44,7 @@
     - ユーザー名：入力しない
     - パスワードまたはアクセストークン：入力しない
     - アプリケーションフレームワーク：ASP.NET
+    - 展開先クラウドプロバイダー：Amazon Web Services
 
 ![run-monolith](./img/run-monolith.png)
 
