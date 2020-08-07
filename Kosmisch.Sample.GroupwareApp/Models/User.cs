@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Kosmisch.Sample.GroupwareApp.Models
+﻿namespace Kosmisch.Sample.GroupwareApp.Models
 {
     public class User
     {

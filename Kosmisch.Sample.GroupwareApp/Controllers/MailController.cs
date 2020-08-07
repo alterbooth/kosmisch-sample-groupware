@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Web;
 using System.Web.Mvc;
 using Kosmisch.Sample.GroupwareApp.Data;
 using Kosmisch.Sample.GroupwareApp.Models;
-using Kosmisch.Sample.OnPremisesAspnetApp.Helpers;
 
 namespace Kosmisch.Sample.GroupwareApp.Controllers
 {
