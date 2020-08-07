@@ -1,7 +1,7 @@
 ﻿using System.Net.Mail;
 using System.Text;
 
-namespace Kosmisch.Sample.OnPremisesAspnetApp.Helpers
+namespace Kosmisch.Sample.GroupwareApp.Helpers
 {
     public static class EmailHelper
     {
